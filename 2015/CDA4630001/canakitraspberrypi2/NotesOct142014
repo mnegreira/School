@@ -1,0 +1,97 @@
+Connection:
+
+RX (GPS) --> TX (Raspberry)
+TX (GPS) --> RX (Raspberry)
+
+
+To get started, hook the GPS module up to your Pi as follows, cross-connecting the TX and
+RX pins (TX on one device goes to RX on the other and vice versa), and supply 5V from the
+
+Pi to the VIN pin on the GPS module:
+{image}
+
+Step One: Run raspi-conf
+From the command prompt enter the following command:
+      sudo raspi-config
+
+Step Two: Disable UART
+From the main menu, (Advance) select option 7 (Serial), then select 'No' to disable shell and kernel messages via UART.
+
+Step Three: Reset
+From the command prompt enter the following commands to reboot your Raspberry Pi board, freeing UART up in the process:
+      sudo reboot
+
+------- 
+  Non-GUI
+-------
+Using UART instead of USB
+If you wish to use HW UART instead of the USB cable, it's perfectly possible ... you just need
+to do a bit more work to free the UART up on your Pi.
+      
+
+Step One: Edit /boot/cmdline.txt
+
+Next, enter the following command from the command line:
+      sudo nano /boot/cmdline.txt
+
+We designed the Ultimate GPS with a built-in regulator, so even if it's powered with 5V,
+the signal levels are still 3.3V - safe for your Pi!
+
+And change:
+
+dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200
+console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline
+rootwait
+
+to:
+
+dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4
+elevator=deadline rootwait
+
+
+Step Two: Edit /etc/inittab
+
+From the command prompt enter the following command:
+
+And change:
+
+#Spawn a getty on Raspberry Pi serial line
+T0:23:respawn:/sbin/getty -L ttyAMA0 115200 vt100
+
+to:
+
+#Spawn a getty on Raspberry Pi serial line
+#T0:23:respawn:/sbin/getty -L ttyAMA0 115200 vt100
+
+Step Three: Reboot your Pi
+
+After rebooting the Pi for the above changes to take effect, you can proceed with running
+
+
+gpsd 
+
+
+Step Four: Restart GPSD with HW UART
+
+Simply entering the following two commands:
+
+      sudo nano /boot/cmdline.txt
+      sudo nano /etc/inittab
+      
+  Restart gpsd and redirect it to use HW UART instead of the USB port we pointed it to earlier.
+      sudo killall gpsd
+  
+      sudo gpsd /dev/ttyAMA0 -F /var/run/gpsd.sock
+      
+  As with the USB example, you can test the output with:
+      cgps -s
+
+===
+sudo apt-get install gpsd gpsd-clients python-gps
+sudo gpsd /dev/ttyUSB0 -F /var/run/gpsd.sock // USB Connection
+sudo gpsd /dev/ttyAMA0 -F /var/run/gpsd.sock // UART Connection
+cgps -s 
+sudo killall gpsd
+sudo gpsd /dev/ttyAMA0 -F /var/run/gpsd.sock
+
+https://learn.adafruit.com/downloads/pdf/adafruit-ultimate-gps-on-the-raspberry-pi.pdf
