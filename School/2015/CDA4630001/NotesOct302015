@@ -21,3 +21,12 @@ address 192.168.2.2
 netmask 255.255.255.0
 gateway 192.168.2.1
 This tells the Pi to adopt the 192.168.2.2 address permanently using the Mac as the IP gateway with corresponding subnet mask.
+
+http://www.danmandle.com/blog/getting-gpsd-to-work-with-python/
+
+http://www.aosabook.org/en/gpsd.html
+
+http://www.topografix.com/gpx_resources.asp
+
+http://www.gpsvisualizer.com/convert_input
+
