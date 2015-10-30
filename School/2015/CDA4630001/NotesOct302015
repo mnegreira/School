@@ -1,0 +1,23 @@
+sudo apt-get install vim
+
+sudo vim /etc/resolv.conf
+
+This will open the Vim editor (same commands as Vi). You want a single line it as follows:
+
+nameserver 192.168.2.1
+This tells the Pi to use the Mac as its DNS server, rather like you might expect with a connection to a home router.
+Having saved the changes, we now need to set the static configuration for the Ethernet port. 
+We’ll use Vim again, this time enter the following command:
+
+sudo vim.tiny /etc/network/interfaces
+
+This time there are a few more lines to add. 
+If you want to make sure you don’t forget your existing Ethernet settings, you can comment them out with a hash. 
+Otherwise, your settings should look as follows:
+
+auto eth0
+iface eth0 inet static
+address 192.168.2.2
+netmask 255.255.255.0
+gateway 192.168.2.1
+This tells the Pi to adopt the 192.168.2.2 address permanently using the Mac as the IP gateway with corresponding subnet mask.
