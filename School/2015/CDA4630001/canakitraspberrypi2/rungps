@@ -1,8 +1,0 @@
-#!/bin/bash
-
-#Running Deamon as Root for LOCK on the SOCKET interrupt
-sudo gpsd /dev/ttyAMA0 -F /var/run/gpsd.sock
-
- # Start running logs on XML
-gpxlogger -d -f gpslogs
-
