@@ -1,0 +1,68 @@
+Let's get down directly to the bussiness: you have set up your brand new Raspberry Pi with your favourite distro (Arch Linux in this case) and want to control a servo motor. You're in luck as we have the technology to do this in 5 minutes or less. Here follow this roadmap:
+
+1. Install ServoBlaster
+
+As you know servos need PWM signals to drive them, which requires a rather precise timing that is hard to achieve in user space of a non-realtime operating system. Thanks to the ServoBlaster driver by Richard Hirst we don't even have to think about those pesky timing stuff. What ServoBlaster does in its most basic form is to provide you with the ability to produce PWM signals from any of Raspberry Pi's GPIO pins. 
+Download or clone the PiBits repository and install the user space daemon.
+
+[root@alarmpi ~]# git clone https://github.com/richardghirst/PiBits.git
+    Cloning into 'PiBits'...
+    remote: Reusing existing pack: 359, done.
+    remote: Total 359 (delta 0), reused 0 (delta 0)
+    Receiving objects: 100% (359/359), 362.62 KiB | 311.00 KiB/s, done.
+    Resolving deltas: 100% (154/154), done.
+    Checking connectivity... done.
+
+[root@alarmpi ~]# cd PiBits/ServoBlaster/user/
+[root@alarmpi user]# make servod
+    gcc -Wall -g -O2 -o servod servod.c -lm
+
+[root@alarmpi user]# ./servod
+
+    Board revision:                  2
+    Using hardware:                PWM
+    Using DMA channel:              14
+    Idle timeout:             Disabled
+    Number of servos:                8
+    Servo cycle time:            20000us
+    Pulse increment step size:      10us
+    Minimum width value:            50 (500us)
+    Maximum width value:           250 (2500us)
+    Output levels:              Normal
+
+    Using P1 pins:               7,11,12,13,15,16,18,22
+    Using P5 pins:
+
+    Servo mapping:
+         0 on P1-7           GPIO-4
+         1 on P1-11          GPIO-17
+         2 on P1-12          GPIO-18
+         3 on P1-13          GPIO-27
+         4 on P1-15          GPIO-22
+         5 on P1-16          GPIO-23
+         6 on P1-18          GPIO-24
+         7 on P1-22          GPIO-25
+2. Wire it up
+
+Your average servo will have 3 wires V+, V- (GROUND) and SIGNAL. Depending on your exact servo motor it'll need 5V or more to actually run but most (if not all) motors will happily accept 3.3V for the SIGNAL (and that is the reason why you can get away with connecting it directly to Pi).
+
+Connect V+ of servo to a matching power supply's positive output. You can always try using the 5V output of Pi but it probably will not be able to supply the power your servo needs.
+Connect V- (GROUND) of servo to matching power supply's negative or ground output and Raspberry Pi's GND pin.
+Connect SIGNAL of servo to Raspberry Pi's GPIO-4 pin. 
+3. Houston, we have a take off!
+
+Now set your servo in some safe place where it won't hurt anyone in case if it spins uncontrollably. Switch on the power supply and set the PWM duty cycle through ServoBlaster. Change the duty cycle value to see how your servo will react and read up more on ServoBlaster for finer control.
+
+[root@alarmpi ~]# echo 0=50% > /dev/servoblaster
+
+
+
+
+http://razzpisampler.oreilly.com/ch05.html
+
+http://sourceforge.net/p/raspberry-gpio-python/wiki/PWM/
+
+http://blog.oscarliang.net/use-gpio-pins-on-raspberry-pi/
+
+
+
